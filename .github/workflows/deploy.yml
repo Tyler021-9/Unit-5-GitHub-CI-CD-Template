@@ -21,11 +21,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Deploy to TEST
+      - name: Start application (TEST)
         run: |
-          echo "Deploying application to TEST environment..."
-          echo "Running smoke tests..."
-          echo "TEST deployment complete."
+          nohup python app.py &
+          sleep 5
+
+      - name: Health check (TEST)
+        run: |
+          curl -v http://localhost:5000/
 
   deploy-prod:
     runs-on: ubuntu-latest
@@ -45,12 +48,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Deploy to PRODUCTION
+      - name: Start application (PROD)
         run: |
-          echo "Deploying application to PRODUCTION..."
-          echo "Production deployment complete."
+          nohup python app.py &
+          sleep 5
+
+      - name: Health check (PROD)
+        run: |
+          curl -v http://localhost:5000/
 
       - name: Monitoring
         run: |
-          echo "Checking logs and metrics..."
-          echo "Monitoring complete."
+          curl -v http://localhost:5000/status
